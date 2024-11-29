@@ -38,7 +38,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
       <TextField
         fullWidth
         variant="outlined"
-        placeholder="Введіть назву страви..."
+        placeholder="Enter dish name..."
         value={searchValue}
         onChange={handleChange}
         onKeyPress={handleKeyPress}
