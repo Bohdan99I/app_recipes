@@ -12,6 +12,7 @@ import {
   Button,
   Snackbar,
   Alert,
+  CircularProgress,
 } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { addSelectedRecipe } from '../store/recipeSlice';
@@ -42,7 +43,16 @@ export const RecipeDetail: React.FC = () => {
   }, [id]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <Box 
+        display="flex" 
+        justifyContent="center" 
+        alignItems="center" 
+        minHeight="100vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (!recipe) {
