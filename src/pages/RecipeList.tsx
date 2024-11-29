@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Container, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
+import { Grid, Container, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent, CircularProgress, Box } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import { setRecipes, setLoading, setError, setCurrentPage, setSearchQuery, setSelectedCategory } from '../store/recipeSlice';
@@ -50,7 +50,7 @@ export const RecipeList: React.FC = () => {
       }
     };
     fetchInitialData();
-  }, [dispatch]);
+  }, [dispatch]); 
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -82,7 +82,7 @@ export const RecipeList: React.FC = () => {
 
   const handleCategoryChange = (event: SelectChangeEvent<string>) => {
     dispatch(setSelectedCategory(event.target.value));
-    dispatch(setSearchQuery(''));
+    dispatch(setSearchQuery('')); 
     dispatch(setCurrentPage(1));
   };
 
@@ -90,13 +90,22 @@ export const RecipeList: React.FC = () => {
     dispatch(setCurrentPage(page));
   };
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
+   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentRecipes = recipes.slice(startIndex, endIndex);
   const totalPages = Math.ceil(recipes.length / itemsPerPage);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <Box 
+        display="flex" 
+        justifyContent="center" 
+        alignItems="center" 
+        minHeight="100vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return (
