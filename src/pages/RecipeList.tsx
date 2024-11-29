@@ -37,6 +37,22 @@ export const RecipeList: React.FC = () => {
     fetchCategories();
   }, []);
 
+  // Add initial data loading effect
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      dispatch(setLoading(true));
+      try {
+        const fetchedRecipes = await api.searchRecipes('');
+        dispatch(setRecipes(fetchedRecipes));
+      } catch (error) {
+        dispatch(setError(error instanceof Error ? error.message : 'An error occurred'));
+      } finally {
+        dispatch(setLoading(false));
+      }
+    };
+    fetchInitialData();
+  }, []); // Empty dependency array means this runs once on mount
+
   useEffect(() => {
     const fetchRecipes = async () => {
       dispatch(setLoading(true));
