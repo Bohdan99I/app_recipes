@@ -37,7 +37,6 @@ export const RecipeList: React.FC = () => {
     fetchCategories();
   }, []);
 
-  // Add initial data loading effect
   useEffect(() => {
     const fetchInitialData = async () => {
       dispatch(setLoading(true));
@@ -51,7 +50,7 @@ export const RecipeList: React.FC = () => {
       }
     };
     fetchInitialData();
-  }, [dispatch]); // Added dispatch to dependencies
+  }, [dispatch]);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -77,13 +76,13 @@ export const RecipeList: React.FC = () => {
 
   const handleSearch = (query: string) => {
     dispatch(setSearchQuery(query));
-    dispatch(setSelectedCategory('')); // Reset category when searching
+    dispatch(setSelectedCategory('')); 
     dispatch(setCurrentPage(1));
   };
 
   const handleCategoryChange = (event: SelectChangeEvent<string>) => {
     dispatch(setSelectedCategory(event.target.value));
-    dispatch(setSearchQuery('')); // Reset search query when changing category
+    dispatch(setSearchQuery(''));
     dispatch(setCurrentPage(1));
   };
 
@@ -91,7 +90,6 @@ export const RecipeList: React.FC = () => {
     dispatch(setCurrentPage(page));
   };
 
-  // Calculate pagination
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentRecipes = recipes.slice(startIndex, endIndex);

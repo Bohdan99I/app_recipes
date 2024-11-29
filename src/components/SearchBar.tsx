@@ -27,8 +27,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(event.target.value);
-    // Якщо поле пошуку пусте, скидаємо результати пошуку
+    setSearchValue(event.target.value);  
     if (!event.target.value.trim()) {
       onSearch('');
     }
