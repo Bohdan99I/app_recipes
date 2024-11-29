@@ -51,7 +51,7 @@ export const RecipeList: React.FC = () => {
       }
     };
     fetchInitialData();
-  }, []); // Empty dependency array means this runs once on mount
+  }, [dispatch]); // Added dispatch to dependencies
 
   useEffect(() => {
     const fetchRecipes = async () => {
