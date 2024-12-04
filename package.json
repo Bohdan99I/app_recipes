@@ -2,7 +2,7 @@
   "name": "recipe-app",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://your-username.github.io/app_recipes",
+  "homepage": "https://Bohdan99I.github.io/app_recipes",
   "dependencies": {
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",

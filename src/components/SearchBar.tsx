@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Box, TextField, IconButton, InputAdornment } from '@mui/material';
 import { Search, Clear } from '@mui/icons-material';
+import { debounce } from 'lodash';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -9,27 +10,25 @@ interface SearchBarProps {
 export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   const [searchValue, setSearchValue] = useState('');
 
-  const handleSearch = () => {
-    if (searchValue.trim()) {
-      onSearch(searchValue.trim());
-    }
-  };
+  const debouncedSearch = useMemo(
+    () => debounce((query: string) => {
+      onSearch(query);
+    }, 500),
+    [onSearch]
+  );
 
   const handleClear = () => {
     setSearchValue('');
     onSearch('');
   };
 
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      handleSearch();
-    }
-  };
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(event.target.value);  
-    if (!event.target.value.trim()) {
+    const value = event.target.value;
+    setSearchValue(value);
+    if (!value.trim()) {
       onSearch('');
+    } else {
+      debouncedSearch(value.trim());
     }
   };
 
@@ -41,7 +40,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
         placeholder="Enter dish name..."
         value={searchValue}
         onChange={handleChange}
-        onKeyPress={handleKeyPress}
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
@@ -50,7 +48,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                   <Clear />
                 </IconButton>
               )}
-              <IconButton onClick={handleSearch} size="small">
+              <IconButton size="small">
                 <Search />
               </IconButton>
             </InputAdornment>
