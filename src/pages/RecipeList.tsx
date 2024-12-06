@@ -57,18 +57,18 @@ export const RecipeList: React.FC = () => {
       dispatch(setLoading(true));
       try {
         let fetchedRecipes;
-        if (searchQuery && selectedCategory) {
-          // Отримуємо рецепти за категорією і фільтруємо їх за пошуковим запитом
-          const categoryRecipes = await api.getRecipesByCategory(selectedCategory);
-          fetchedRecipes = categoryRecipes.filter(recipe => 
-            recipe.strMeal.toLowerCase().includes(searchQuery.toLowerCase())
-          );
-        } else if (searchQuery) {
-          fetchedRecipes = await api.searchRecipes(searchQuery);
-        } else if (selectedCategory) {
+        if (selectedCategory) {
+          // Отримуємо рецепти за категорією
           fetchedRecipes = await api.getRecipesByCategory(selectedCategory);
+          // Якщо є пошуковий запит, фільтруємо результати
+          if (searchQuery) {
+            fetchedRecipes = fetchedRecipes.filter(recipe => 
+              recipe.strMeal.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+          }
         } else {
-          fetchedRecipes = await api.searchRecipes('');
+          // Якщо категорія не вибрана, використовуємо пошук
+          fetchedRecipes = await api.searchRecipes(searchQuery || '');
         }
         dispatch(setRecipes(fetchedRecipes));
       } catch (error) {
