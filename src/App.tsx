@@ -1,7 +1,10 @@
 import React from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { store } from './store/store';
+import { queryClient } from './lib/queryClient';
 import { RecipeList } from './pages/RecipeList';
 import { RecipeDetail } from './pages/RecipeDetail';
 import { SelectedRecipes } from './pages/SelectedRecipes';
@@ -69,9 +72,12 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <Provider store={store}>
-      <Router>
-        <AppContent />
-      </Router>
+      <QueryClientProvider client={queryClient}>
+        <Router>
+          <AppContent />
+        </Router>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
     </Provider>
   );
 };

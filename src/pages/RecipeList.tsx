@@ -1,84 +1,32 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Grid, Container, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent, CircularProgress, Box } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/store';
-import { setRecipes, setLoading, setError, setCurrentPage, setSearchQuery, setSelectedCategory } from '../store/recipeSlice';
+import { setCurrentPage, setSearchQuery, setSelectedCategory } from '../store/recipeSlice';
 import { RecipeCard } from '../components/RecipeCard';
 import { SearchBar } from '../components/SearchBar';
 import { Pagination } from '../components/Pagination';
-import { api } from '../services/api';
+import { useRecipes, useCategories } from '../hooks/useRecipes';
 
 export const RecipeList: React.FC = () => {
   const dispatch = useDispatch();
   const { 
-    recipes,
-    loading,
     currentPage,
     itemsPerPage,
     searchQuery,
     selectedCategory 
   } = useSelector((state: RootState) => state.recipes);
 
-  const [categories, setCategories] = useState<string[]>([]);
-  const [loadingCategories, setLoadingCategories] = useState(true);
+  const { 
+    data: recipes = [], 
+    isLoading: recipesLoading,
+    error: recipesError 
+  } = useRecipes(searchQuery, selectedCategory);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      setLoadingCategories(true);
-      try {
-        const categoriesList = await api.getCategories();
-        setCategories(categoriesList);
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      } finally {
-        setLoadingCategories(false);
-      }
-    };
-    fetchCategories();
-  }, []);
-
-  useEffect(() => {
-    const fetchInitialData = async () => {
-      dispatch(setLoading(true));
-      try {
-        const fetchedRecipes = await api.searchRecipes('');
-        dispatch(setRecipes(fetchedRecipes));
-      } catch (error) {
-        dispatch(setError(error instanceof Error ? error.message : 'An error occurred'));
-      } finally {
-        dispatch(setLoading(false));
-      }
-    };
-    fetchInitialData();
-  }, [dispatch]); 
-
-  useEffect(() => {
-    const fetchRecipes = async () => {
-      dispatch(setLoading(true));
-      try {
-        let fetchedRecipes;
-        if (selectedCategory) {
-          // Отримуємо рецепти за категорією
-          fetchedRecipes = await api.getRecipesByCategory(selectedCategory);
-          // Якщо є пошуковий запит, фільтруємо результати
-          if (searchQuery) {
-            fetchedRecipes = fetchedRecipes.filter(recipe => 
-              recipe.strMeal.toLowerCase().includes(searchQuery.toLowerCase())
-            );
-          }
-        } else {
-          // Якщо категорія не вибрана, використовуємо пошук
-          fetchedRecipes = await api.searchRecipes(searchQuery || '');
-        }
-        dispatch(setRecipes(fetchedRecipes));
-      } catch (error) {
-        dispatch(setError('Error fetching recipes'));
-      } finally {
-        dispatch(setLoading(false));
-      }
-    };
-    fetchRecipes();
-  }, [dispatch, searchQuery, selectedCategory]);
+  const { 
+    data: categories = [],
+    isLoading: categoriesLoading
+  } = useCategories();
 
   const handleSearch = (query: string) => {
     dispatch(setSearchQuery(query));
@@ -95,12 +43,22 @@ export const RecipeList: React.FC = () => {
     dispatch(setCurrentPage(page));
   };
 
-   const startIndex = (currentPage - 1) * itemsPerPage;
+  const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentRecipes = recipes.slice(startIndex, endIndex);
   const totalPages = Math.ceil(recipes.length / itemsPerPage);
 
-  if (loading) {
+  if (recipesError) {
+    return (
+      <Container>
+        <Box sx={{ textAlign: 'center', mt: 4 }}>
+          Error loading recipes. Please try again later.
+        </Box>
+      </Container>
+    );
+  }
+
+  if (recipesLoading || categoriesLoading) {
     return (
       <Box 
         display="flex" 
@@ -123,7 +81,7 @@ export const RecipeList: React.FC = () => {
           value={categories.includes(selectedCategory) ? selectedCategory : ''}
           label="Category"
           onChange={handleCategoryChange}
-          disabled={loadingCategories}
+          disabled={categoriesLoading}
         >
           <MenuItem value="">All Categories</MenuItem>
           {categories.map((category) => (
