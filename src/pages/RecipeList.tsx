@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Grid, Container, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent, CircularProgress, Box } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/store';
@@ -7,9 +7,11 @@ import { RecipeCard } from '../components/RecipeCard';
 import { SearchBar } from '../components/SearchBar';
 import { Pagination } from '../components/Pagination';
 import { useRecipes, useCategories } from '../hooks/useRecipes';
+import { useSearchParams } from 'react-router-dom';
 
 export const RecipeList: React.FC = () => {
   const dispatch = useDispatch();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { 
     currentPage,
     itemsPerPage,
@@ -27,6 +29,26 @@ export const RecipeList: React.FC = () => {
     data: categories = [],
     isLoading: categoriesLoading
   } = useCategories();
+
+  // Синхронізація URL параметрів зі станом Redux при першому завантаженні
+  useEffect(() => {
+    const urlPage = searchParams.get('page');
+    const urlQuery = searchParams.get('query');
+    const urlCategory = searchParams.get('category');
+
+    if (urlPage) dispatch(setCurrentPage(Number(urlPage)));
+    if (urlQuery) dispatch(setSearchQuery(urlQuery));
+    if (urlCategory) dispatch(setSelectedCategory(urlCategory));
+  }, []);
+
+  // Оновлення URL параметрів при зміні стану
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (currentPage > 1) params.set('page', currentPage.toString());
+    if (searchQuery) params.set('query', searchQuery);
+    if (selectedCategory) params.set('category', selectedCategory);
+    setSearchParams(params);
+  }, [currentPage, searchQuery, selectedCategory]);
 
   const handleSearch = (query: string) => {
     dispatch(setSearchQuery(query));
