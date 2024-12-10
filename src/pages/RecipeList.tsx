@@ -48,7 +48,7 @@ export const RecipeList: React.FC = () => {
     if (searchQuery) params.set('query', searchQuery);
     if (selectedCategory) params.set('category', selectedCategory);
     setSearchParams(params);
-  }, [currentPage, searchQuery, selectedCategory]);
+  }, [currentPage, searchQuery, selectedCategory, setSearchParams]);
 
   const handleSearch = (query: string) => {
     dispatch(setSearchQuery(query));
