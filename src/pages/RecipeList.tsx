@@ -1,52 +1,59 @@
-import React, { useEffect } from 'react';
-import { Grid, Container, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent, CircularProgress, Box } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../store/store';
-import { setCurrentPage, setSearchQuery, setSelectedCategory } from '../store/recipeSlice';
-import { RecipeCard } from '../components/RecipeCard';
-import { SearchBar } from '../components/SearchBar';
-import { Pagination } from '../components/Pagination';
-import { useRecipes, useCategories } from '../hooks/useRecipes';
-import { useSearchParams } from 'react-router-dom';
+import React, { useEffect } from "react";
+import {
+  Grid,
+  Container,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+  CircularProgress,
+  Box,
+} from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store/store";
+import { setCurrentPage, setSearchQuery, setSelectedCategory } from "../store/recipeSlice";
+import { RecipeCard } from "../components/RecipeCard";
+import { SearchBar } from "../components/SearchBar";
+import { Pagination } from "../components/Pagination";
+import { useRecipes, useCategories } from "../hooks/useRecipes";
+import { usePagination } from '../hooks/usePagination';
+import { useSearchParams } from "react-router-dom";
+
 
 export const RecipeList: React.FC = () => {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { 
-    currentPage,
-    itemsPerPage,
-    searchQuery,
-    selectedCategory 
-  } = useSelector((state: RootState) => state.recipes);
+  const { currentPage, itemsPerPage, searchQuery, selectedCategory } =
+    useSelector((state: RootState) => state.recipes);
 
-  const { 
-    data: recipes = [], 
+  const {
+    data: recipes = [],
     isLoading: recipesLoading,
-    error: recipesError 
+    error: recipesError,
   } = useRecipes(searchQuery, selectedCategory);
+  const { data: categories = [], isLoading: categoriesLoading } =
+    useCategories();
 
-  const { 
-    data: categories = [],
-    isLoading: categoriesLoading
-  } = useCategories();
+  const { handlePageChange } = usePagination(); // Використання нового хуку
 
   // Синхронізація URL параметрів зі станом Redux при першому завантаженні
   useEffect(() => {
-    const urlPage = searchParams.get('page');
-    const urlQuery = searchParams.get('query');
-    const urlCategory = searchParams.get('category');
+    const urlPage = searchParams.get("page");
+    const urlQuery = searchParams.get("query");
+    const urlCategory = searchParams.get("category");
 
     if (urlPage) dispatch(setCurrentPage(Number(urlPage)));
     if (urlQuery) dispatch(setSearchQuery(urlQuery));
     if (urlCategory) dispatch(setSelectedCategory(urlCategory));
-  }, []);
+  }, [dispatch, searchParams]);
 
   // Оновлення URL параметрів при зміні стану
   useEffect(() => {
     const params = new URLSearchParams();
-    if (currentPage > 1) params.set('page', currentPage.toString());
-    if (searchQuery) params.set('query', searchQuery);
-    if (selectedCategory) params.set('category', selectedCategory);
+    if (currentPage > 1) params.set("page", currentPage.toString());
+    if (searchQuery) params.set("query", searchQuery);
+    if (selectedCategory) params.set("category", selectedCategory);
     setSearchParams(params);
   }, [currentPage, searchQuery, selectedCategory, setSearchParams]);
 
@@ -57,12 +64,8 @@ export const RecipeList: React.FC = () => {
 
   const handleCategoryChange = (event: SelectChangeEvent<string>) => {
     dispatch(setSelectedCategory(event.target.value));
-    dispatch(setSearchQuery('')); 
+    dispatch(setSearchQuery(""));
     dispatch(setCurrentPage(1));
-  };
-
-  const handlePageChange = (page: number) => {
-    dispatch(setCurrentPage(page));
   };
 
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -73,7 +76,7 @@ export const RecipeList: React.FC = () => {
   if (recipesError) {
     return (
       <Container>
-        <Box sx={{ textAlign: 'center', mt: 4 }}>
+        <Box sx={{ textAlign: "center", mt: 4 }}>
           Error loading recipes. Please try again later.
         </Box>
       </Container>
@@ -82,10 +85,10 @@ export const RecipeList: React.FC = () => {
 
   if (recipesLoading || categoriesLoading) {
     return (
-      <Box 
-        display="flex" 
-        justifyContent="center" 
-        alignItems="center" 
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
         minHeight="100vh"
       >
         <CircularProgress />
@@ -96,11 +99,11 @@ export const RecipeList: React.FC = () => {
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <SearchBar onSearch={handleSearch} />
-      
+
       <FormControl fullWidth sx={{ mb: 3 }}>
         <InputLabel>Category</InputLabel>
         <Select
-          value={categories.includes(selectedCategory) ? selectedCategory : ''}
+          value={categories.includes(selectedCategory) ? selectedCategory : ""}
           label="Category"
           onChange={handleCategoryChange}
           disabled={categoriesLoading}
