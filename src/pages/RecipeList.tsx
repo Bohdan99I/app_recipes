@@ -17,7 +17,7 @@ import { RecipeCard } from "../components/RecipeCard";
 import { SearchBar } from "../components/SearchBar";
 import { Pagination } from "../components/Pagination";
 import { useRecipes, useCategories } from "../hooks/useRecipes";
-import { usePagination } from '../hooks/usePagination';
+import usePagination from '../hooks/usePagination';
 import { useSearchParams } from "react-router-dom";
 
 
