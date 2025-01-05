@@ -54,13 +54,12 @@ export const SelectedRecipes: React.FC = () => {
 
   const calculateTotalIngredients = useCallback(() => {
     const ingredientsMap = new Map<string, Ingredient>();
-
+  
     selectedRecipes.forEach((recipe) => {
-      let i = 1;
-      while (recipe[`strIngredient${i}` as keyof Recipe]) {
+      for (let i = 1; i <= 20; i++) { // Припускаємо, що максимум 20 інгредієнтів
         const ingredient = recipe[`strIngredient${i}` as keyof Recipe] as string;
         const measure = recipe[`strMeasure${i}` as keyof Recipe] as string;
-
+  
         if (ingredient?.trim()) {
           const ingredientKey = ingredient.toLowerCase();
           if (!ingredientsMap.has(ingredientKey)) {
@@ -69,17 +68,16 @@ export const SelectedRecipes: React.FC = () => {
               measures: [],
             });
           }
-          
+  
           const currentIngredient = ingredientsMap.get(ingredientKey)!;
           const measureWithQuantity = recipe.quantity > 1 
             ? `${measure} (x${recipe.quantity})`
             : measure;
           currentIngredient.measures.push(measureWithQuantity);
         }
-        i++;
       }
     });
-
+  
     return Array.from(ingredientsMap.values())
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [selectedRecipes]);
