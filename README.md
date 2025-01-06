@@ -1,6 +1,6 @@
 # Recipe App
 
-A modern React application for discovering and managing recipes. Built with TypeScript and Material-UI.
+A modern React application for discovering and managing recipes. Built with TypeScript and Material-UI. This application allows users to explore a diverse collection of recipes from various cuisines, helping them to find inspiration for their next meal. Users can easily search for recipes by name, filter them by categories such as appetizers, main courses, desserts, and more. The app also features a responsive design, ensuring a seamless experience across devices, whether on desktop or mobile. With a user-friendly interface powered by Material-UI, users can save their favorite recipes for quick access later, making meal planning easier and more enjoyable.
 
 ## Features
 
