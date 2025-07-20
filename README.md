@@ -22,16 +22,19 @@ A modern React application for discovering and managing recipes. Built with Type
 ## Getting Started
 
 1. Clone the repository
+
 ```bash
 git clone https://github.com/Bohdan99I/app_recipes.git
 ```
 
 2. Install dependencies
+
 ```bash
 npm install
 ```
 
 3. Run the development server
+
 ```bash
 npm start
 ```
@@ -43,3 +46,7 @@ Visit the live application at: https://bohdan99i.github.io/app_recipes/
 ## License
 
 This project is open source and available under the MIT License.
+
+## ✍️ Author
+
+Bohdan Voitov
